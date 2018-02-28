@@ -23,7 +23,7 @@ class ProdutoController extends Controller
 
     public function index()
     {
-        $produtos = $this->produto->all();
+        $produtos = $this->produto->paginate(8);
         $title = "Listagem dos produtos";
 
         return view('painel.produtos.index',compact('produtos','title'));
@@ -73,7 +73,9 @@ class ProdutoController extends Controller
      */
     public function show($id)
     {
-        //
+        $produto = $this->produto->find($id);
+        $title = "Produto: {$produto->name}";
+        return view('painel.produtos.show',compact('produto','title'));
     }
 
     /**
@@ -121,7 +123,12 @@ class ProdutoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $produto = $this->produto->find($id);
+        $delete = $produto->delete();
+        if($delete)
+            return redirect()->route('produtos.index');
+        else
+            return redirect()->route('produtos.show',$produto )->width(['errors' => 'falha ao deletar']);
     }
 
     public function test()
